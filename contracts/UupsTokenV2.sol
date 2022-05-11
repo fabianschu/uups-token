@@ -4,16 +4,19 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@abacus-network/app/contracts/Router.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 
-contract UupsTokenV2 is Initializable, ERC20Upgradeable, UUPSUpgradeable, OwnableUpgradeable {
+
+contract UupsTokenV2 is ERC20Upgradeable, UUPSUpgradeable, OwnableUpgradeable, Router {
     event DoNothing();
     
     function initialize() initializer public {
+      __Router_initialize(address(0));
       __ERC20_init("UupsToken", "UUPS");
       __Ownable_init(); 
       __UUPSUpgradeable_init();
-      _mint(msg.sender, 1000 * 10 ** decimals());
+      _mint(msg.sender, 1500);
     }
 
     /// @custom:oz-upgrades-unsafe-allow constructor
@@ -23,5 +26,17 @@ contract UupsTokenV2 is Initializable, ERC20Upgradeable, UUPSUpgradeable, Ownabl
 
     function doNothing() public {
       emit DoNothing();
+    }
+
+    function mint(address account, uint256 amount) public {
+      _mint(account, amount);
+    }
+
+    function _handle(
+        uint32 _origin,
+        bytes32,
+        bytes memory _message
+    ) internal override {
+
     }
 }

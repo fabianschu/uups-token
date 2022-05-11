@@ -6,12 +6,12 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 
-contract UupsToken is Initializable, ERC20Upgradeable, UUPSUpgradeable, OwnableUpgradeable {
+contract UupsToken is ERC20Upgradeable, UUPSUpgradeable, OwnableUpgradeable {
     function initialize() initializer public {
       __ERC20_init("UupsToken", "UUPS");
       __Ownable_init(); 
       __UUPSUpgradeable_init();
-      _mint(msg.sender, 1000 * 10 ** decimals());
+      _mint(msg.sender, 500);
     }
 
     /// @custom:oz-upgrades-unsafe-allow constructor
