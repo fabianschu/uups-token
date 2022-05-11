@@ -8,4 +8,10 @@ typechain
 cache
 artifacts
 
+# solc outputs
 tmp
+
+# deployment files for testnets
+.openzeppelin/unknown-31337.json
+deployments/hardhat.json
+deployments/localhost.json
