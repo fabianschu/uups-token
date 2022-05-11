@@ -5,6 +5,16 @@
       "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
       "txHash": "0x53e2d5558580ffce74bbec2b2705002a09c02df7e657afe745f041c4f654c504",
       "kind": "uups"
+    },
+    {
+      "address": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
+      "txHash": "0xa986a530e69953e2d496656044a7695b33f63fe22c1ec480b7d4196bca169eb9",
+      "kind": "uups"
+    },
+    {
+      "address": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
+      "txHash": "0x56bb21110b04aafa62adcf8b47a461bed4df5772b7ea9aad0a5406ebbfe3f3cd",
+      "kind": "uups"
     }
   ],
   "impls": {
