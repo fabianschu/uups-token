@@ -36,6 +36,8 @@ task("upgrade", "Upgrades token contract")
       upgradedContract.address
     );
 
+    console.log(`new implementation address: `, implementation);
+
     deployments[idx] = {
       name: upgrade,
       address: upgradedContract.address,
@@ -43,4 +45,9 @@ task("upgrade", "Upgrades token contract")
       chainId: network.provider.chainId,
       implementation,
     };
+
+    await fs.writeFile(
+      `deployments/${network.name}.json`,
+      JSON.stringify(deployments, null, 2)
+    );
   });
