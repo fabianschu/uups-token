@@ -24,7 +24,7 @@ describe("UupsToken", function () {
     });
   });
 
-  context("with proxy admin ownership transferred to alice", () => {
+  context("with ownership transferred to alice", () => {
     beforeEach("transfer proxy admin ownership to alice", async () => {
       await uupsToken.transferOwnership(alice.address);
     });
@@ -53,6 +53,20 @@ describe("UupsToken", function () {
 
         await expect(uupsTokenV2.doNothing()).to.emit(uupsTokenV2, "DoNothing");
       });
+    });
+  });
+
+  context("with ownership renounced", () => {
+    it("reverts if attempting to upgrade", async () => {
+      expect(await uupsToken.owner()).to.equal(deployer.address);
+
+      await uupsToken.renounceOwnership();
+
+      const UupsTokenV2 = await ethers.getContractFactory("UupsTokenV2");
+
+      await expect(
+        upgrades.upgradeProxy(uupsToken.address, UupsTokenV2)
+      ).to.be.revertedWith("Ownable: caller is not the owner");
     });
   });
 });

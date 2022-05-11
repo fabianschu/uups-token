@@ -18,7 +18,7 @@ contract UupsTokenV2 is Initializable, ERC20Upgradeable, UUPSUpgradeable, Ownabl
 
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() initializer {}
-
+    
     function _authorizeUpgrade(address) internal override onlyOwner {}
 
     function doNothing() public {
