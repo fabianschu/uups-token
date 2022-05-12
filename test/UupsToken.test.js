@@ -27,19 +27,19 @@ describe("UupsToken", function () {
   });
 
   context("when upgrading the token", () => {
-    const v2SupplyCap = 2 * 10 ** 9;
-
-    let uupsTokenV2;
+    let testUupsTokenV2;
 
     beforeEach("transfer some tokens from bob to alice", async () => {
       await uupsToken.connect(bob).transfer(alice.address, aliceShare);
     });
 
     beforeEach("upgrade the token contract", async () => {
-      const UupsTokenV2 = await ethers.getContractFactory("UupsTokenV2");
-      uupsTokenV2 = await upgrades.upgradeProxy(
+      const TestUupsTokenV2 = await ethers.getContractFactory(
+        "TestUupsTokenV2"
+      );
+      testUupsTokenV2 = await upgrades.upgradeProxy(
         uupsToken.address,
-        UupsTokenV2,
+        TestUupsTokenV2,
         {
           call: { fn: "upgradeFunction", args: [someSigner.address] },
         }
@@ -47,18 +47,23 @@ describe("UupsToken", function () {
     });
 
     it("adds functions to implementation contract", async () => {
-      await expect(uupsTokenV2.doNothing()).to.emit(uupsTokenV2, "DoNothing");
+      await expect(testUupsTokenV2.doNothing()).to.emit(
+        testUupsTokenV2,
+        "DoNothing"
+      );
     });
 
     it("conserves the token balances", async () => {
-      expect(await uupsTokenV2.balanceOf(alice.address)).to.equal(aliceShare);
-      expect(await uupsTokenV2.balanceOf(bob.address)).to.equal(
+      expect(await testUupsTokenV2.balanceOf(alice.address)).to.equal(
+        aliceShare
+      );
+      expect(await testUupsTokenV2.balanceOf(bob.address)).to.equal(
         v1SupplyCap - aliceShare
       );
     });
 
     it("initializes the correct abacusConnectionManager", async () => {
-      expect(await uupsTokenV2.abacusConnectionManager()).to.equal(
+      expect(await testUupsTokenV2.abacusConnectionManager()).to.equal(
         someSigner.address
       );
     });
@@ -71,27 +76,32 @@ describe("UupsToken", function () {
 
     context("when original deployer tries to upgrade", () => {
       it("reverts 'Ownable: caller is not the owner'", async () => {
-        const UupsTokenV2 = await ethers.getContractFactory("UupsTokenV2");
+        const TestUupsTokenV2 = await ethers.getContractFactory(
+          "TestUupsTokenV2"
+        );
 
         await expect(
-          upgrades.upgradeProxy(uupsToken.address, UupsTokenV2)
+          upgrades.upgradeProxy(uupsToken.address, TestUupsTokenV2)
         ).to.be.revertedWith("Ownable: caller is not the owner");
       });
     });
 
     context("when alice tries to upgrade", () => {
       it("upgrades the implementation", async () => {
-        const UupsTokenV2 = await ethers.getContractFactory(
-          "UupsTokenV2",
+        const TestUupsTokenV2 = await ethers.getContractFactory(
+          "TestUupsTokenV2",
           alice
         );
 
-        const uupsTokenV2 = await upgrades.upgradeProxy(
+        const testUupsTokenV2 = await upgrades.upgradeProxy(
           uupsToken.address,
-          UupsTokenV2
+          TestUupsTokenV2
         );
 
-        await expect(uupsTokenV2.doNothing()).to.emit(uupsTokenV2, "DoNothing");
+        await expect(testUupsTokenV2.doNothing()).to.emit(
+          testUupsTokenV2,
+          "DoNothing"
+        );
       });
     });
   });
@@ -102,10 +112,12 @@ describe("UupsToken", function () {
 
       await uupsToken.renounceOwnership();
 
-      const UupsTokenV2 = await ethers.getContractFactory("UupsTokenV2");
+      const TestUupsTokenV2 = await ethers.getContractFactory(
+        "TestUupsTokenV2"
+      );
 
       await expect(
-        upgrades.upgradeProxy(uupsToken.address, UupsTokenV2)
+        upgrades.upgradeProxy(uupsToken.address, TestUupsTokenV2)
       ).to.be.revertedWith("Ownable: caller is not the owner");
     });
   });
