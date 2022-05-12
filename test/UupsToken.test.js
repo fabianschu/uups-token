@@ -2,13 +2,21 @@ const { expect } = require("chai");
 const { ethers, upgrades } = require("hardhat");
 
 describe("UupsToken", function () {
-  let deployer, alice;
+  let deployer, alice, bob;
   let uupsToken;
 
   beforeEach("deploy UupsToken", async () => {
-    [deployer, alice] = await ethers.getSigners();
+    [deployer, alice, bob] = await ethers.getSigners();
     const UupsToken = await ethers.getContractFactory("UupsToken");
-    uupsToken = await upgrades.deployProxy(UupsToken, { kind: "uups" });
+    uupsToken = await upgrades.deployProxy(UupsToken, [bob.address], {
+      kind: "uups",
+    });
+  });
+
+  it("mints 1bn tokens to recipient", async () => {
+    const supplyCap = 10 ** 9;
+
+    expect(await uupsToken.balanceOf(bob.address)).to.equal(supplyCap);
   });
 
   context("when upgrading the token", () => {

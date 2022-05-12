@@ -9,7 +9,9 @@ task("deploy", "Deploys implementation and proxy contract").setAction(
     console.log(`deploying ${contractName} proxy to ${network.name}`);
 
     const UupsToken = await ethers.getContractFactory("UupsToken");
-    const uupsToken = await upgrades.deployProxy(UupsToken, { kind: "uups" });
+    const uupsToken = await upgrades.deployProxy(UupsToken, {
+      kind: "uups",
+    });
 
     console.log(`tx: ${uupsToken.deployTransaction.hash}`);
 

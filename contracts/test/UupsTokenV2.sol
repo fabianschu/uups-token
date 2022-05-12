@@ -10,14 +10,16 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20CappedUp
 
 contract UupsTokenV2 is ERC20CappedUpgradeable, UUPSUpgradeable, OwnableUpgradeable, Router {
     event DoNothing();
+
+    uint256 constant supplyCap = 2 * 10**9;
     
     function initialize() initializer public {
-      __ERC20Capped_init(10 * 10**10);
+      __ERC20Capped_init(supplyCap);
       __Router_initialize(address(0));
       __ERC20_init("UupsToken", "UUPS");
       __Ownable_init(); 
       __UUPSUpgradeable_init();
-      _mint(msg.sender, 1500);
+      _mint(msg.sender, supplyCap);
     }
 
     /// @custom:oz-upgrades-unsafe-allow constructor
