@@ -11,12 +11,12 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20CappedUp
 contract UupsTokenV2 is ERC20CappedUpgradeable, UUPSUpgradeable, OwnableUpgradeable, Router {
     event DoNothing();
 
-    function initialize() initializer public {
-      __Router_initialize(address(0));
-    }
-
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() initializer {}
+
+    function upgradeFunction(address abacusConnectionManager) reinitializer(2) onlyOwner public {
+      __Router_initialize(abacusConnectionManager);
+    }
     
     function _authorizeUpgrade(address) internal override onlyOwner {}
 

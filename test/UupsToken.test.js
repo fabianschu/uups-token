@@ -5,11 +5,11 @@ describe("UupsToken", function () {
   const v1SupplyCap = 10 ** 9;
   const aliceShare = 10 ** 5;
 
-  let deployer, alice, bob;
+  let deployer, alice, bob, someSigner;
   let uupsToken;
 
   beforeEach("deploy UupsToken", async () => {
-    [deployer, alice, bob] = await ethers.getSigners();
+    [deployer, alice, bob, someSigner] = await ethers.getSigners();
     const UupsToken = await ethers.getContractFactory("UupsToken");
     uupsToken = await upgrades.deployProxy(UupsToken, [bob.address], {
       kind: "uups",
@@ -37,7 +37,13 @@ describe("UupsToken", function () {
 
     beforeEach("upgrade the token contract", async () => {
       const UupsTokenV2 = await ethers.getContractFactory("UupsTokenV2");
-      uupsTokenV2 = await upgrades.upgradeProxy(uupsToken.address, UupsTokenV2);
+      uupsTokenV2 = await upgrades.upgradeProxy(
+        uupsToken.address,
+        UupsTokenV2,
+        {
+          call: { fn: "upgradeFunction", args: [someSigner.address] },
+        }
+      );
     });
 
     it("adds functions to implementation contract", async () => {
@@ -45,9 +51,15 @@ describe("UupsToken", function () {
     });
 
     it("conserves the token balances", async () => {
-      expect(await uupsToken.balanceOf(alice.address)).to.equal(aliceShare);
-      expect(await uupsToken.balanceOf(bob.address)).to.equal(
+      expect(await uupsTokenV2.balanceOf(alice.address)).to.equal(aliceShare);
+      expect(await uupsTokenV2.balanceOf(bob.address)).to.equal(
         v1SupplyCap - aliceShare
+      );
+    });
+
+    it("initializes the correct abacusConnectionManager", async () => {
+      expect(await uupsTokenV2.abacusConnectionManager()).to.equal(
+        someSigner.address
       );
     });
   });
