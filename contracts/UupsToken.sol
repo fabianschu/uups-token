@@ -19,4 +19,8 @@ contract UupsToken is ERC20CappedUpgradeable, UUPSUpgradeable, OwnableUpgradeabl
     constructor() initializer {}
 
     function _authorizeUpgrade(address) internal override onlyOwner {}
+
+    function mint(address account, uint256 amount) public onlyOwner {
+      _mint(account, amount);
+    }
 }
