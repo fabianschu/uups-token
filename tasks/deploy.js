@@ -1,15 +1,16 @@
 const { task } = require("hardhat/config");
 const fs = require("fs/promises");
 
-task("deploy", "Deploys implementation and proxy contract").setAction(
-  async (taskArgs, { ethers, network, upgrades }) => {
-    const {} = taskArgs;
+task("deploy", "Deploys implementation and proxy contract")
+  .addPositionalParam("recipient")
+  .setAction(async (taskArgs, { ethers, network, upgrades }) => {
+    const { recipient } = taskArgs;
     const contractName = "UupsToken";
 
     console.log(`deploying ${contractName} proxy to ${network.name}`);
 
     const UupsToken = await ethers.getContractFactory("UupsToken");
-    const uupsToken = await upgrades.deployProxy(UupsToken, {
+    const uupsToken = await upgrades.deployProxy(UupsToken, [recipient], {
       kind: "uups",
     });
 
@@ -41,5 +42,4 @@ task("deploy", "Deploys implementation and proxy contract").setAction(
     );
 
     console.log(`saved new proxy to deployments/${network.name}.json`);
-  }
-);
+  });
