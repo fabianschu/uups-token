@@ -4,8 +4,9 @@ const fs = require("fs/promises");
 task("upgrade", "Upgrades token contract")
   .addPositionalParam("proxy")
   .addPositionalParam("upgrade")
+  .addPositionalParam("abacus")
   .setAction(async (taskArgs, { ethers, network, upgrades }) => {
-    const { proxy, upgrade } = taskArgs;
+    const { proxy, upgrade, abacus } = taskArgs;
 
     const deployments = JSON.parse(
       await fs.readFile(`deployments/${network.name}.json`)
@@ -23,7 +24,10 @@ task("upgrade", "Upgrades token contract")
     const UpgradedContract = await ethers.getContractFactory(upgrade);
     const upgradedContract = await upgrades.upgradeProxy(
       proxy,
-      UpgradedContract
+      UpgradedContract,
+      {
+        call: { fn: "upgradeFunction", args: [abacus] },
+      }
     );
 
     console.log(`tx: ${upgradedContract.deployTransaction.hash}`);
