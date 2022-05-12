@@ -15,6 +15,7 @@ contract UupsToken is ERC20CappedUpgradeable, UUPSUpgradeable, OwnableUpgradeabl
       __ERC20Capped_init(supplyCap);
       __Ownable_init(); 
       __UUPSUpgradeable_init();
+
       _mint(recipient, supplyCap);
     }
 
