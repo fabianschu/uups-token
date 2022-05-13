@@ -6,13 +6,13 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20CappedUpgradeable.sol";
 
-contract UupsToken is ERC20Upgradeable, UUPSUpgradeable, OwnableUpgradeable {
+contract UupsToken is ERC20CappedUpgradeable, UUPSUpgradeable, OwnableUpgradeable {
 
     function initialize(address recipient, uint256 mintAmount) initializer public {
       __ERC20_init("UupsToken", "UUPS");
       __Ownable_init(); 
       __UUPSUpgradeable_init();
-
+      __ERC20Capped_init(mintAmount);
       _mint(recipient, mintAmount);
     }
 

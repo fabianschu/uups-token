@@ -26,7 +26,7 @@ describe("UupsToken", function () {
     });
   });
 
-  context("when upgrading the token", () => {
+  context("when upgrading the token to v2", () => {
     let testUupsTokenV2;
 
     beforeEach("transfer some tokens from bob to alice", async () => {
@@ -66,6 +66,10 @@ describe("UupsToken", function () {
       expect(await testUupsTokenV2.abacusConnectionManager()).to.equal(
         someSigner.address
       );
+    });
+
+    it("increases the supply cap", async () => {
+      expect(await testUupsTokenV2.cap()).to.equal(ethers.constants.MaxUint256);
     });
   });
 

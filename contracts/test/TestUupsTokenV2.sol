@@ -8,11 +8,14 @@ import "@abacus-network/app/contracts/Router.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20CappedUpgradeable.sol";
 
 
-contract TestUupsTokenV2 is ERC20Upgradeable, UUPSUpgradeable, OwnableUpgradeable, Router {
+contract TestUupsTokenV2 is ERC20CappedUpgradeable, UUPSUpgradeable, OwnableUpgradeable, Router {
     event DoNothing();
+
+    uint256 constant MAX_INT = 2**256 - 1;
 
     function upgradeFunction(address abacusConnectionManager) reinitializer(2) onlyOwner public {
       __Router_initialize(abacusConnectionManager);
+      __ERC20Capped_init(MAX_INT);
     }
 
     /// @custom:oz-upgrades-unsafe-allow constructor
