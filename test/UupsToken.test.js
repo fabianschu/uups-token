@@ -2,8 +2,8 @@ const { expect } = require("chai");
 const { ethers, upgrades } = require("hardhat");
 
 describe("UupsToken", function () {
-  const v1SupplyCap = 10 ** 9;
-  const aliceShare = 10 ** 5;
+  const v1SupplyCap = ethers.utils.parseEther((10 ** 9).toString());
+  const aliceShare = ethers.utils.parseEther((10 ** 5).toString());
 
   let deployer, alice, bob, someSigner;
   let uupsToken;
@@ -11,18 +11,18 @@ describe("UupsToken", function () {
   beforeEach("deploy UupsToken", async () => {
     [deployer, alice, bob, someSigner] = await ethers.getSigners();
     const UupsToken = await ethers.getContractFactory("UupsToken");
-    uupsToken = await upgrades.deployProxy(UupsToken, [bob.address], {
-      kind: "uups",
-    });
+    uupsToken = await upgrades.deployProxy(
+      UupsToken,
+      [bob.address, v1SupplyCap],
+      {
+        kind: "uups",
+      }
+    );
   });
 
   context("when the token has been deployed", () => {
     it("mints 1bn tokens to recipient", async () => {
       expect(await uupsToken.balanceOf(bob.address)).to.equal(v1SupplyCap);
-    });
-
-    it("sets 1bn as supply cap", async () => {
-      expect(await uupsToken.cap()).to.equal(v1SupplyCap);
     });
   });
 
@@ -58,7 +58,7 @@ describe("UupsToken", function () {
         aliceShare
       );
       expect(await testUupsTokenV2.balanceOf(bob.address)).to.equal(
-        v1SupplyCap - aliceShare
+        v1SupplyCap.sub(aliceShare)
       );
     });
 

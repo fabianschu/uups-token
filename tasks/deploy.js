@@ -4,15 +4,21 @@ const fs = require("fs/promises");
 task("deploy", "Deploys implementation and proxy contract")
   .addPositionalParam("recipient")
   .setAction(async (taskArgs, { ethers, network, upgrades }) => {
+    const ONE_BILLION = ethers.utils.parseEther((1_000_000_000).toString());
+
     const { recipient } = taskArgs;
     const contractName = "UupsToken";
 
     console.log(`deploying ${contractName} proxy to ${network.name}`);
 
     const UupsToken = await ethers.getContractFactory("UupsToken");
-    const uupsToken = await upgrades.deployProxy(UupsToken, [recipient], {
-      kind: "uups",
-    });
+    const uupsToken = await upgrades.deployProxy(
+      UupsToken,
+      [recipient, ONE_BILLION],
+      {
+        kind: "uups",
+      }
+    );
 
     console.log(`tx: ${uupsToken.deployTransaction.hash}`);
 
