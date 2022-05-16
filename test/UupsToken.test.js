@@ -6,7 +6,7 @@ describe("UupsToken", function () {
   const aliceShare = ethers.utils.parseEther((10 ** 5).toString());
 
   let deployer, alice, bob, someSigner;
-  let uupsToken;
+  let uupsToken, v1Implementation;
 
   beforeEach("deploy UupsToken", async () => {
     [deployer, alice, bob, someSigner] = await ethers.getSigners();
@@ -17,6 +17,10 @@ describe("UupsToken", function () {
       {
         kind: "uups",
       }
+    );
+
+    v1Implementation = await upgrades.erc1967.getImplementationAddress(
+      uupsToken.address
     );
   });
 
@@ -44,6 +48,20 @@ describe("UupsToken", function () {
           call: { fn: "upgradeFunction", args: [someSigner.address] },
         }
       );
+    });
+
+    describe("proxy setup", async () => {
+      it("conserves the proxy address", async () => {
+        expect(testUupsTokenV2.address).to.equal(uupsToken.address);
+      });
+
+      it("changes the implementation address", async () => {
+        expect(
+          await upgrades.erc1967.getImplementationAddress(
+            testUupsTokenV2.address
+          )
+        ).not.to.equal(v1Implementation);
+      });
     });
 
     it("adds functions to implementation contract", async () => {
